@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using CUL.MLS;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -26,14 +27,19 @@ public class MLS_Tests
 
     #region Setup
 
-    private GameObject testObject;
+    private GameObject mlsControllerObject;
+    private GameObject mlsTextTestObject;
     private MultiLanguageText mlsText;
+    private MultiLanguageController mlsController;
 
     [SetUp]
     public void Setup()
     {
-        testObject = new GameObject();
-        mlsText = testObject.AddComponent<MultiLanguageText>();
+        mlsControllerObject = new GameObject("mlsController");
+        mlsController = mlsControllerObject.AddComponent<MultiLanguageController>();
+        mlsTextTestObject = new GameObject("mlsTextTest");
+        mlsTextTestObject.AddComponent<TextMeshProUGUI>();
+        mlsText = mlsTextTestObject.AddComponent<MultiLanguageText>();
     }
 
     #endregion

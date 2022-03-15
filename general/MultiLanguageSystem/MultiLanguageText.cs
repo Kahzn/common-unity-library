@@ -15,72 +15,75 @@ namespace CUL.MLS
 /// </summary>
 public class MultiLanguageText : MonoBehaviour
 {
-    public bool debug;
-
     [SerializeField]
-    private string textkey;
+    private string textkey = "textkey";
 
     [Tooltip("Determines whether or not to fill the adjacent TextMeshPro or Text Component with the MLS text.")]
     public bool fillText = true;
 
-    private string mlsText = "";
-
+    private string translatedText = "";
     private TextMeshProUGUI textMeshPro;
-    private bool tmProExists;
-    private bool simpleTextExists;
     private UnityEngine.UI.Text text;
     private MultiLanguageController multiLanguageController;
-
+    private bool tmProExists;
+    private bool simpleTextExists;
     private bool ready;
 
-#region Monobehaviour Callbacks
+#region Initialization
 
     // Start is called before the first frame update
     void Start()
     {
-        if(debug)
-            Debugging.Log("Running MLS Text Initialization.", this.GetType().Name);
+        Initialize();
+    }
 
-        MultilanguageSingleton.LanguageSelection += LanguageSelectionHandler;
+    private void Initialize()
+    {
+        DebugHandler.Log("Running MLS Text Initialization.", this);
 
-        tmProExists = TryGetComponent<TextMeshProUGUI>(out textMeshPro);
-        simpleTextExists = TryGetComponent<UnityEngine.UI.Text>(out text);
-
+        BindLanguageSelecionHandler();
+        CheckForTextComponents();
         LoadLanguageFiles();
     }
 
-    #endregion
-    
-    #region private Methods
+    private void BindLanguageSelecionHandler()
+    {
+        MultilanguageSingleton.LanguageSelection += LanguageSelectionHandler;
+    }
+
+    private void CheckForTextComponents()
+    {
+        tmProExists = TryGetComponent<TextMeshProUGUI>(out textMeshPro);
+        simpleTextExists = TryGetComponent<UnityEngine.UI.Text>(out text);
+    }
+
+#endregion
+
+#region private Methods
 
     private void LanguageSelectionHandler(string langkey)
     {
-
+        DebugHandler.Log("Received Language Selection Event. Switching Texts", this);
         LoadLanguageFiles();
-
-        if(debug) Debugging.Log("Received Language Selection Event. Switching Texts", this.GetType().Name);
     }
 
     private void LoadLanguageFiles(string key = "")
     {
-        if(debug)
-        {
-            Debugging.Log("MLS found, loading language files", this);
-        }
+        DebugHandler.Log("MLS found, loading language files", this);
 
-        if(key == "")
+        if (key == "")
         {
-            mlsText = MultilanguageSingleton.Instance.ReadXML(textkey);
+            translatedText = MultilanguageSingleton.Instance.ReadXML(textkey);
         }
         else
         {
-            mlsText = MultilanguageSingleton.Instance.ReadXML(key);
+            translatedText = MultilanguageSingleton.Instance.ReadXML(key);
         }
         
 
         if(fillText)
         {
-            FillTextComponents(mlsText);
+            FillTextComponents(translatedText);
         }
 
         ready = true;
@@ -90,11 +93,11 @@ public class MultiLanguageText : MonoBehaviour
     {
         if (tmProExists)
         {
-            textMeshPro.text = mlsText;
+            textMeshPro.text = translatedText;
         }
         if (simpleTextExists)
         {
-            text.text = mlsText;
+            text.text = translatedText;
         }
     }
 
@@ -109,13 +112,13 @@ public class MultiLanguageText : MonoBehaviour
 
     public string GetMLSText()
     {
-        return mlsText;
+        return translatedText;
     }
 
     public string GetMLSText(string textKey)
     {
         LoadLanguageFiles(textKey);
-        return mlsText;
+        return translatedText;
     }
 
     #endregion

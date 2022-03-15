@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<languages>
+<ENG>
+
+  <!-- Testing-->
+  <string name="Hello">Hello!</string>
+  <string name="Hello World">Hello World!</string>
+  <string name="textkey">Textkey not set!</string>
+
+</ENG>
+</languages>

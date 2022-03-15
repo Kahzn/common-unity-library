@@ -54,9 +54,32 @@ public class MultilanguageSingleton
 
     private void Initialize()
     {
-        path = string.Concat(systemPath, Path.DirectorySeparatorChar, "LocalizationFiles", Path.DirectorySeparatorChar);
-        configPath = string.Concat(path, config, ".ini");
+        BuildPathToLocalizationFiles();
 
+        if (Directory.Exists(path))
+        {
+                ConfigureLanguageSettings();
+        }
+        else
+        {
+            systemPath = Path.Combine(Application.dataPath, "common-unity-library", "general", "MultiLanguageSystem");
+            BuildPathToLocalizationFiles();
+            ConfigureLanguageSettings();
+            DebugHandler.Log("Did not find StreamingAssets-Folder in Project, using fallback in library.", this);
+        }
+        
+
+        FillXmlStrings();
+    }
+
+    private void BuildPathToLocalizationFiles()
+    {
+            path = string.Concat(systemPath, Path.DirectorySeparatorChar, "LocalizationFiles", Path.DirectorySeparatorChar);
+            configPath = string.Concat(path, config, ".ini");
+    }
+
+    private void ConfigureLanguageSettings()
+    {
         if (!File.Exists(configPath))
         {
             CreateFile(configPath);
@@ -66,9 +89,8 @@ public class MultilanguageSingleton
         {
             currentLanguage = ReadLanguageSettings();
         }
+     }
 
-        FillXmlStrings();
-    }
 
     #region Read / Write Config
     public void WriteLanguageSettings(string langkey)
